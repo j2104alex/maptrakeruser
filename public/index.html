@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Home</title>
+
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.10.0/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.10.0/mapbox-gl.css' rel='stylesheet' />
+    <link href='styles.css' rel='stylesheet' />
+
+
+</head>
+
+<body>
+    <div id="map">
+
+    </div>
+    <div id="app">
+        <button onclick="notifyMe()">Notify me!</button>
+    </div>
+
+
+    <script src='mapa.js'></script>
+
+    <!--  <script src='./socket.io/socket.io.js'></script>
+    <script src='./js/clientsocket.js'></script> -->
+
+    <script src="./socket.io/socket.io.js"></script>
+    <script>
+        var socket = io();
+        socket.emit('chat message', 'hola server');
+
+        
+    </script>
+
+
+    <script>
+        function notifyMe() {
+            if (!("Notification" in window)) {
+                // Check if the browser supports notifications
+                alert("This browser does not support desktop notification");
+            } else if (Notification.permission === "granted") {
+                // Check whether notification permissions have already been granted;
+                // if so, create a notification
+                /* const notification = new Notification("Hi there!"); */
+                // create a new notification
+                const notification = new Notification('JavaScript Notification API', {
+                    body: 'This is a JavaScript Notification API demo',
+                    icon: './img/js.png',
+                    vibrate: true
+                });
+
+                // close the notification after 10 seconds
+                setTimeout(() => {
+                    notification.close();
+                }, 10 * 1000);
+
+                // navigate to a URL
+                notification.addEventListener('click', () => {
+                    window.open('https://www.javascripttutorial.net/web-apis/javascript-notification/', '_blank');
+                });
+                // …
+            } else if (Notification.permission !== "denied") {
+                // We need to ask the user for permission
+                Notification.requestPermission().then((permission) => {
+                    // If the user accepts, let's create a notification
+                    if (permission === "granted") {
+                        /*  const notification = new Notification("Hi there!"); */
+                        // create a new notification
+                        const notification = new Notification('JavaScript Notification API', {
+                            body: 'This is a JavaScript Notification API demo',
+                            icon: './img/js.png',
+                            vibrate: true
+                        });
+
+                        // close the notification after 10 seconds
+                        setTimeout(() => {
+                            notification.close();
+                        }, 10 * 1000);
+
+                        // navigate to a URL
+                        notification.addEventListener('click', () => {
+                            window.open('https://www.javascripttutorial.net/web-apis/javascript-notification/', '_blank');
+                        });
+                        // …
+                    }
+                });
+            }
+
+            // At last, if the user has denied notifications, and you
+            // want to be respectful there is no need to bother them anymore.
+        }
+    </script>
+</body>
+
+</html>
