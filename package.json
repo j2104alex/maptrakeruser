@@ -6,7 +6,7 @@
         "node": "12.17.x"
     },
     "scripts": {
-        "start": "node server.js"
+        "start": "npm install && node server.js"
     },
     "devDependencies": {
         "express": "^4.18.2",
