@@ -4,7 +4,7 @@
     "description": "my first socket.io app",
     "engines": {
         "node": "12.17.x"
-      },
+    },
     "scripts": {
         "start": "node server.js"
     },
