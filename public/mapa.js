@@ -53,6 +53,11 @@ window.addEventListener('DOMContentLoaded', () => {
             zoom: 14, // starting zoom
             projection: 'globe' // display the map as a 3D globe
         });
+
+        const marker = new mapboxgl.Marker()
+                .setLngLat([lng,lat])
+                .addTo(map);
+
         map.on('style.load', () => {
             map.setFog({}); // Set the default atmosphere style
         });
@@ -67,9 +72,7 @@ window.addEventListener('DOMContentLoaded', () => {
          socket.on('chat send server message', (msg) => {
             console.log(msg)
             const {Latitude, Longitude} = msg
-            const marker = new mapboxgl.Marker()
-                .setLngLat([Longitude,Latitude])
-                .addTo(map);
+            marker.setLngLat([Latitude, Longitude])
         });
     }
 
