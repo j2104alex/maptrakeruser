@@ -31,7 +31,7 @@ io.on('connection', (socket) => {
   socket.on('geo_posicion', (msg) => {
     console.log('objectposition: ' + msg);
     //socket.broadcast.emit('hi');
-    //io.emit('chat send server message', msg);
+    io.emit('chat send server message', msg);
   });
 });
 

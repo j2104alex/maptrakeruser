@@ -66,10 +66,10 @@ window.addEventListener('DOMContentLoaded', () => {
 
          socket.on('chat send server message', (msg) => {
             console.log(msg)
-            const {lat, log} = msg
+            /* const {lat, log} = msg
             const marker = new mapboxgl.Marker()
                 .setLngLat([log,lat])
-                .addTo(map);
+                .addTo(map); */
         });
     }
 
