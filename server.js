@@ -6,7 +6,7 @@ const server = http.createServer(app);
 
 //socket 
 const { Server } = require("socket.io");
-const io = new Server(server);
+const io = new Server(server,{ cors: true, origin:true, allowEIO3: true });
 
 // Servimos los archivos que se encuentran en el directorio public
 app.use(express.static(path.join(__dirname, './public')));
