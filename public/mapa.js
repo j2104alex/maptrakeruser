@@ -1,6 +1,7 @@
 window.addEventListener('DOMContentLoaded', () => {
     const appDiv = document.getElementById('app');
-   /*  appDiv.innerHTML = `<h1>Obtener Geolocalización</h1>`; */
+    let marker;
+    /*  appDiv.innerHTML = `<h1>Obtener Geolocalización</h1>`; */
 
     const options = {
         enableHighAccuracy: true,
@@ -13,7 +14,7 @@ window.addEventListener('DOMContentLoaded', () => {
             appDiv.innerHTML += `<p>Latitud: ${pos.coords.latitude}</p>`;
             appDiv.innerHTML += `<p>Longitud: ${pos.coords.longitude}</p>`;
             loadMap(parseFloat(pos.coords.latitude), parseFloat(pos.coords.longitude))
-            socket.emit('chat message', {'lat':pos.coords.latitude,'log':pos.coords.longitude});
+            socket.emit('chat message', { 'lat': pos.coords.latitude, 'log': pos.coords.longitude });
         }, (error) => {
             switch (error.code) {
                 case error.PERMISSION_DENIED:
@@ -36,14 +37,14 @@ window.addEventListener('DOMContentLoaded', () => {
         appDiv.innerHTML += `<h2>WatchPosition( )</h2>`;
         appDiv.innerHTML += `<p>Latitud: ${pos.coords.latitude}</p>`;
         appDiv.innerHTML += `<p>Longitud: ${pos.coords.longitude}</p>`;
-        
+
 
     });
 
     navigator.geolocation.clearWatch(watchID);
 
     const loadMap = (lat, lng) => {
-        console.log(lat,lng);
+        console.log(lat, lng);
 
         mapboxgl.accessToken = 'pk.eyJ1IjoiY3J1c3RvMjAyMiIsImEiOiJjbDg3c3lmaTExNmg4M3BubGhyMThvMmhsIn0.AhcG868gRKbP-zDiccuMdA';
         const map = new mapboxgl.Map({
@@ -53,11 +54,6 @@ window.addEventListener('DOMContentLoaded', () => {
             zoom: 14, // starting zoom
             projection: 'globe' // display the map as a 3D globe
         });
-
-        const marker = new mapboxgl.Marker()
-                .setLngLat([lng,lat])
-                .addTo(map);
-
         map.on('style.load', () => {
             map.setFog({}); // Set the default atmosphere style
         });
@@ -69,16 +65,26 @@ window.addEventListener('DOMContentLoaded', () => {
         .setLngLat([lng, lat])
         .addTo(map); */
 
-         socket.on('chat send server message', (msg) => {
+        socket.on('chat send server message', (msg) => {
             console.log(msg)
-            const {Latitude, Longitude} = msg
-            marker.setLngLat([Latitude, Longitude]).addTo(map);
+            const { Latitude, Longitude } = msg
+            if (marker != null) {
+                marker.remove();
+                marker = new mapboxgl.Marker()
+                    .setLngLat([Longitude, Latitude])
+                    .addTo(map);
+            } else {
+                marker = new mapboxgl.Marker()
+                    .setLngLat([Longitude, Latitude])
+                    .addTo(map);
+            }
+
         });
     }
 
-    
 
-    const createMarket = (lat, lng,map) => {
+
+    const createMarket = (lat, lng, map) => {
         // Create a new marker.
         const marker = new mapboxgl.Marker()
             .setLngLat([lat, lng])
