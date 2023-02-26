@@ -72,7 +72,7 @@ window.addEventListener('DOMContentLoaded', () => {
          socket.on('chat send server message', (msg) => {
             console.log(msg)
             const {Latitude, Longitude} = msg
-            marker.setLngLat([Latitude, Longitude])
+            marker.setLngLat([Latitude, Longitude]).addTo(map);
         });
     }
 
