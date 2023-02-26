@@ -12,9 +12,6 @@ const io = new Server(server);
 app.use(express.static(path.join(__dirname, './public')));
 app.get('/', (req, res) => {
   // Servimos los archivos que se encuentran en el directorio public
-
-
-
   /* res.sendFile(__dirname + '/index.html'); */
 });
 
@@ -33,5 +30,5 @@ io.on('connection', (socket) => {
 
 
 server.listen(process.env.PORT || 5000, () => {
-  console.log('listening on *:6060');
+  console.log('listening on http://localhost:5000');
 });
