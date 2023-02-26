@@ -26,6 +26,13 @@ io.on('connection', (socket) => {
     io.emit('chat send server message', msg);
   });
   socket.emit('text', 'wow. such event. very real time.');
+
+  //EVENTO PARA ENVIAR INFORMACION DE LAS RUTAS.
+  socket.on('geo_posicion', (msg) => {
+    console.log('objectposition: ' + msg);
+    //socket.broadcast.emit('hi');
+    //io.emit('chat send server message', msg);
+  });
 });
 
 
