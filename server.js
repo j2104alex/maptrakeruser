@@ -25,6 +25,7 @@ io.on('connection', (socket) => {
     //socket.broadcast.emit('hi');
     io.emit('chat send server message', msg);
   });
+  socket.emit('text', 'wow. such event. very real time.');
 });
 
 
