@@ -11,9 +11,13 @@ function main(){
     
     // Cordova is now initialized. Have fun!
 
-    let socket = io("http://localhost:8000",{
+   /*  let socket = io("http://localhost:8000",{
+        withCredentials: true
+    }) */
+    let socket = io("https://socket-maptracker.onrender.com",{
         withCredentials: true
     })
+
     //let socket = io("https://socket-maptracker.onrender.com/")
     //let socket = io("ws://socket-maptracker.onrender.com/")
 
