@@ -1,5 +1,6 @@
 window.addEventListener('DOMContentLoaded', () => {
     const appDiv = document.getElementById('app');
+    appDiv.style.display="none"
     let marker;
     /*  appDiv.innerHTML = `<h1>Obtener Geolocalización</h1>`; */
 
