@@ -54,12 +54,12 @@ function main() {
     // Cordova is now initialized. Have fun!
 
     //TEST URL LOCAL
-    let socket = io("http://localhost:8000", {
-        withCredentials: true
-    })
-    /* let socket = io("https://socket-maptracker.onrender.com",{
+   /*  let socket = io("http://localhost:8000", {
         withCredentials: true
     }) */
+    let socket = io("https://socket-maptracker.onrender.com",{
+        withCredentials: true
+    })
 
     
 
