@@ -66,8 +66,8 @@ window.addEventListener('DOMContentLoaded', () => {
         .setLngLat([lng, lat])
         .addTo(map); */
 
-        socket.on('chat send server message', (msg) => {
-            console.log(msg)
+        socket.on('chat_send_server_message', (msg) => {
+            console.log("datos recibidos",msg)
             const { Latitude, Longitude } = msg
             if (marker != null) {
                 marker.remove();

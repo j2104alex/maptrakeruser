@@ -57,7 +57,7 @@
                         placeholder="Ingresar nombre de la prueba"> -->
                         <div class="col-4 mx-auto p-2">
                         <label for="country">Rutas:</label>
-                        <select  class="form-select" id="countrydata" onchange="GuardarNombreRuta(event)">
+                        <select  class="form-select" id="countrydata" onchange="onSelectRuta(event)">
                             <option selected value="seleccione">SELECCIONE</option>
                             <option value="Ruta_4">Ruta 4</option>
                             <option value="Ruta_5">Ruta 5</option>
@@ -71,7 +71,7 @@
                             autocomplete="off" /> -->
                 </div>
                 <div class="col-12 p-2">
-                    <button class="btn btn-success btn-sm" id="GuardarRuta">GUARDAR NOMBRE</button>
+                    <button class="btn btn-success btn-sm" id="GuardarRuta" onclick="GuardarNombreRuta()">GUARDAR NOMBRE</button>
                 </div>
             </div>
         </div>

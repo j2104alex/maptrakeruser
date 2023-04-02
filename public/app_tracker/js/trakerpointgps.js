@@ -1,25 +1,67 @@
 
 let watchIDElement;
-let nombreRutaDB = "";
+let nombreRutaDB = "Ruta taxi";
 let nombreRutaDBRoom = "";
 let opcionesRuta = []
 let watchID;
+let simlutePintCoordenate = 0
+let puntosSimulacion;
 
 document.addEventListener('DOMContentLoaded', main, false);
 
-function main(){
-    
-    // Cordova is now initialized. Have fun!
+/* let temporizadorSimulador = setInterval(() => {
+    simlutePintCoordenate += 1
+}, 3000); */
 
-   /*  let socket = io("http://localhost:8000",{
-        withCredentials: true
-    }) */
-    let socket = io("https://socket-maptracker.onrender.com",{
-        withCredentials: true
+function main() {
+
+    //NOS CONECTAMOS A LA FIREBASE PARA SIMULAR UNA RUTA
+    let datosfirebase;
+    //TODO:CUANDO este funcionando en movil habilitamos esta linea.
+    //window.socket.emit('geo_posicion', { room: nombreRutaDBRoom, data: _datos });
+    //console.log("enviando datos....")
+
+    //HACEMOS LA PETICION A FIREBASE DE LAS RUTAS GUARDADAS CON ANTERIORIDAD.
+    fetch(`https://amigaapp-f2f93-default-rtdb.firebaseio.com/dbrutas/Ruta%20taxi.json`, {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
     })
 
-    //let socket = io("https://socket-maptracker.onrender.com/")
-    //let socket = io("ws://socket-maptracker.onrender.com/")
+        .then(response => response.json())
+        .then(json => {
+
+            console.log(json)
+            puntosSimulacion = Object.values(json)
+            console.log(puntosSimulacion)
+
+            /*  if (simlutePintCoordenate > json.length) {
+                 clearInterval(temporizadorSimulador)
+                 simlutePintCoordenate = 0
+             } */
+
+
+        })
+        .catch(err => console.log(err))
+        .finally(() => {
+            console.log('finish')
+
+
+        })
+
+    // Cordova is now initialized. Have fun!
+
+    //TEST URL LOCAL
+    let socket = io("http://localhost:8000", {
+        withCredentials: true
+    })
+    /* let socket = io("https://socket-maptracker.onrender.com",{
+        withCredentials: true
+    }) */
+
+    
 
     window.socket = socket
 
@@ -27,13 +69,13 @@ function main(){
         console.log("Success");
     }); */
 
-   /*  WonderPush.setLogging(true) */
+    /*  WonderPush.setLogging(true) */
 
     //CONFIGURANDO LA NOTIFICACION PUSH.
     // Prompt user for push subscription
     /* WonderPush.subscribeToNotifications(); */
 
-   
+
     document.getElementById("getPosition").addEventListener("click", getPosition);
     document.getElementById("watchPosition").addEventListener("click", watchPosition);
     /*  document.getElementById("networkInfo").addEventListener("click", networkInfo);
@@ -79,12 +121,19 @@ function main(){
 
 }
 
+function onSelectRuta(e) {
+    //+ new Date().toLocaleString().replace(",","-").replace(" ","")
+    nombreRutaDBRoom = e.target.value.replace(" ", "_")
+}
 function GuardarNombreRuta(e) {
     //+ new Date().toLocaleString().replace(",","-").replace(" ","")
-    
-    
-    nombreRutaDBRoom = e.target.value.replace(" ", "_")
-    alert(nombreRutaDBRoom)
+    window.socket.emit('join_room_sala', { room: nombreRutaDBRoom });
+    let temporizadorSimulador = setInterval(() => {
+        window.socket.emit('geo_posicion', { room: nombreRutaDBRoom, data: puntosSimulacion[simlutePintCoordenate] });
+        console.log("enviando datos....", puntosSimulacion[simlutePintCoordenate])
+
+        simlutePintCoordenate += 1
+    }, 3000);
 }
 
 function getPosition() {
@@ -114,6 +163,8 @@ function stopWatch() {
     navigator.geolocation.clearWatch(watchID);
 }
 
+
+
 function watchPosition() {
     //document.getElementById('stopwatchPosition').classList.remove('disabled')
     if (nombreRutaDBRoom === "") {
@@ -128,6 +179,7 @@ function watchPosition() {
         watchIDElement = navigator.geolocation.watchPosition(onSuccess, onError, options);
 
         function onSuccess(position) {
+
             document.getElementById('info').innerHTML =
                 'Latitude: ' + position.coords.latitude + '\n' +
                 'Longitude: ' + position.coords.longitude + '\n' +
@@ -146,23 +198,11 @@ function watchPosition() {
                 'Speed': position.coords.speed
             }
 
-            window.socket.emit('geo_posicion', {room:nombreRutaDBRoom,data:_datos});
-            console.log("enviando datos....")
 
-            /* fetch(`https://amigaapp-f2f93-default-rtdb.firebaseio.com/dbrutas/${nombreRutaDB}.json`, {
-                method: 'PATH',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(_datos)
-            })
-                .then(json => console.log(json))
-                .catch(err => console.log(err))
-                .finally(() => {
-                    console.log('finish')
-                }) */
-
+            /*  window.socket.emit('geo_posicion', { room: nombreRutaDBRoom, data: puntosSimulacion[simlutePintCoordenate] });
+             console.log("enviando datos....",puntosSimulacion[simlutePintCoordenate])
+ 
+             simlutePintCoordenate += 1 */
             /* fetch('https://amigaapp-f2f93-default-rtdb.firebaseio.com/Prueba.json', {
                 method: "POST",
                 body: JSON.stringify(_datos),
