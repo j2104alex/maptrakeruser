@@ -21,6 +21,7 @@ function main() {
     //window.socket.emit('geo_posicion', { room: nombreRutaDBRoom, data: _datos });
     //console.log("enviando datos....")
 
+
     //HACEMOS LA PETICION A FIREBASE DE LAS RUTAS GUARDADAS CON ANTERIORIDAD.
     fetch(`https://amigaapp-f2f93-default-rtdb.firebaseio.com/dbrutas/Ruta%20taxi.json`, {
         method: 'GET',
@@ -54,14 +55,14 @@ function main() {
     // Cordova is now initialized. Have fun!
 
     //TEST URL LOCAL
-   /*  let socket = io("http://localhost:8000", {
-        withCredentials: true
-    }) */
-    let socket = io("https://socket-maptracker.onrender.com",{
+    let socket = io("http://localhost:8000", {
         withCredentials: true
     })
+    /* let socket = io("https://socket-maptracker.onrender.com",{
+        withCredentials: true
+    }) */
 
-    
+
 
     window.socket = socket
 
@@ -114,26 +115,34 @@ function main() {
         })
 
     document.getElementById('selectRutas').addEventListener('change', (event) => {
-        console.log(event.target.value);
-        nombreRutaDB = event.target.value
-        alert(nombreRutaDB)
+        alert("ruta change")
+        window.socket.emit('join_room_sala', { room: nombreRutaDBRoom });
+        let temporizadorSimulador = setInterval(() => {
+            window.socket.emit('geo_posicion', { room: nombreRutaDBRoom, data: puntosSimulacion[simlutePintCoordenate] });
+
+            console.log("enviando datos....", puntosSimulacion[simlutePintCoordenate])
+
+            simlutePintCoordenate += 1
+        }, 3000);
     });
 
 }
 
 function onSelectRuta(e) {
-    //+ new Date().toLocaleString().replace(",","-").replace(" ","")
+    console.log(e.target.value);
     nombreRutaDBRoom = e.target.value.replace(" ", "_")
+
 }
+
 function GuardarNombreRuta(e) {
     //+ new Date().toLocaleString().replace(",","-").replace(" ","")
-    window.socket.emit('join_room_sala', { room: nombreRutaDBRoom });
+    /* window.socket.emit('join_room_sala', { room: nombreRutaDBRoom });
     let temporizadorSimulador = setInterval(() => {
         window.socket.emit('geo_posicion', { room: nombreRutaDBRoom, data: puntosSimulacion[simlutePintCoordenate] });
         console.log("enviando datos....", puntosSimulacion[simlutePintCoordenate])
 
         simlutePintCoordenate += 1
-    }, 3000);
+    }, 3000); */
 }
 
 function getPosition() {

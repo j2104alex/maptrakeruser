@@ -44,21 +44,17 @@ app.get('/', (req, res) => {
 
 io.on('connection', (socket) => {
   console.log('a user connected');
-  io.to(socket.id).emit('chat send server message', "Hola bienvenido al server");
-  socket.on('disconnect', () => {
-    console.log('user disconnected');
-
-  });
   //MENSAJE DE BIENVENIDA.
-  //socket.emit('mensaje_bienvenida', "bienvenido usuario")
+  io.to(socket.id).emit('chat send server message', "Hola bienvenido al server");
 
   //EVENTO PARA TODAS LAS PERSONA CONECTADAS A LA SALA INFORMANDO LA LISTA DE LOS USUARIOS CONECTADOS
   //socket.broadcast.to(data.sala).emit('chat send server message', data.mensaje)
 
-  //CONEXION A UNA SALA EN ESPECIFICO.
+  socket.on('disconnect', () => {
+    console.log('user disconnected');
 
-
-
+  });
+  
   //EVENTO CUANDO ALGUIEN SE CONECTA A UNA SALA
  /*  io.of("/").adapter.on("join-room", (room, id) => {
     console.log(`socket ${id} has joined room ${room}`);
@@ -83,7 +79,7 @@ io.on('connection', (socket) => {
 
   socket.on('join_room_sala', (data) => {
     console.log('message: ' + data.room);
-    //SUSCRIBE TO ROOM.
+    //CONEXION A UNA SALA EN ESPECIFICO.
     socket.join(data.room);
 
 
@@ -92,10 +88,14 @@ io.on('connection', (socket) => {
     console.log(io.sockets.adapter.rooms)
     //RESPUESTA A LOS USUARIO CONECTADO.
     //io.emit('chat send server message', data);
+
     //EVENTO PARA TODAS LAS PERSONAS CONECTADAS A LA SALA EXCEPTO QUIEN ENVIA, INFORMANDO LA LISTA DE LOS USUARIOS CONECTADOS
     //socket.broadcast.to(data.sala).emit('chat send server message', `Hola bienvenido a la sala ${data.sala}`)
+
     //EVENTO PARA TODAS LAS PERSONAS CONECTADAS A LA SALA, INFORMANDO LA LISTA DE LOS USUARIOS CONECTADOS
+    
     //socket.to(data.sala).emit('chat send server message', `Hola bienvenido a la sala ${data.sala}`)
+    
     //BIENVENIDA A LA SALA
     io.to(socket.id).emit('server_message_rooms', `Hola bienvenido a la sala ${data.sala}`)
 
@@ -105,7 +105,8 @@ io.on('connection', (socket) => {
 
   });
 
-  socket.on('chat message', (data) => {
+  
+  socket.on('data_gps', (data) => {
    
     //SUSCRIBE TO ROOM.
     console.log(data.sala)
@@ -125,20 +126,18 @@ io.on('connection', (socket) => {
 
   });
 
-  socket.emit('text', 'wow. such event. very real time.');
-
   //EVENTO PARA ENVIAR INFORMACION DE LAS RUTAS.
   socket.on('geo_posicion', (msg) => {
     console.log('objectposition: ' + msg.room);
     //socket.broadcast.emit('hi');
     //EVENTO PARA TODAS LAS PERSONA CONECTADAS A LA SALA INFORMANDO LA LISTA DE LOS USUARIOS CONECTADOS
     socket.broadcast.to(msg.room).emit('chat_send_server_message', msg.data)
+    
+    //SI VAMOS A ENVIAR LA INFORMACION A TODOS.
     /*io.emit('chat send server message', msg.data);
     io.emit('chat_send_server_message', msg.data);*/
   });
 });
-
-
 
 server.listen(process.env.PORT || 8000, () => {
   console.log('listening on http://localhost:8000');

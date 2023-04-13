@@ -52,7 +52,7 @@
         onSelectRuta = (e) => {
             console.log("SELECCINADO:", e.target.value.replace(" ", "_"))
             
-            socket.emit('chat message', { mensaje: 'hola server', sala: e.target.value.replace(" ", "_") });
+            socket.emit('data_gps', { mensaje: 'hola server', sala: e.target.value.replace(" ", "_") });
             socket.on('server_message_rooms', (mensaje) => {
                 console.log(mensaje)
             });

@@ -12,6 +12,8 @@ window.addEventListener('DOMContentLoaded', () => {
         maximumAge: 0
     };
 
+    
+
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition((pos) => {
             appDiv.innerHTML += `<p>Latitud: ${pos.coords.latitude}</p>`;
@@ -192,18 +194,41 @@ window.addEventListener('DOMContentLoaded', () => {
         .setLngLat([lng, lat])
         .addTo(map); */
 
+
+        /**
+         * ESCUCHAMOS LA INFORMACION ENVIADA DESDE EL SERVIDOR
+         */
         socket.on('chat_send_server_message', (msg) => {
             console.log("datos recibidos", msg)
-            const { Latitude, Longitude } = msg
+            const { Latitude, Longitude, Speed } = msg
+            const el = document.createElement('div');
+
+            el.style.width = "42px"
+            el.style.height = "42px"
+            el.style.backgroundImage = "url('../../assets/iconbus.svg')"
+            el.style.backgroundSize = "cover"
+            el.style.borderRadius = "50%"
+            el.style.cursor = "pointer"
+            
+            el.className = 'marker';
+
+            var popupText = new mapboxgl.Popup({ offset: 25 })
+                                    .setLngLat([Longitude, Latitude])
+                                    .setHTML(`<div><h3>DEMO</h3><br>Dirección:<span>Norte - Sur</span><br><span>Velocidad: ${Speed}</span></div>`)
+                                    .addTo(map);
+
+
             if (marker != null) {
                 marker.remove();
-                marker = new mapboxgl.Marker()
+                marker = new mapboxgl.Marker(el)
                     .setLngLat([Longitude, Latitude])
-                    .addTo(map);
+                    .addTo(map)
+                    .setPopup(popupText);
             } else {
-                marker = new mapboxgl.Marker()
+                marker = new mapboxgl.Marker(el)
                     .setLngLat([Longitude, Latitude])
-                    .addTo(map);
+                    .addTo(map)
+                    .setPopup(popupText);
             }
 
         });
