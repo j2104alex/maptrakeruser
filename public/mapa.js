@@ -1,4 +1,108 @@
 window.addEventListener('DOMContentLoaded', () => {
+
+
+    //SOCKET CODE
+
+    let userChat = []
+    let rutaSeleccionada = ""
+
+    var socket = io();
+
+    onSelectRuta = (e) => {
+        console.log("SELECCINADO:", e.target.value.replace(" ", "_"))
+        //GUARDAMOS LA RUTA SELECCIONADA
+        rutaSeleccionada = e.target.value.replace(" ", "_")
+        socket.emit('data_gps', { mensaje: 'hola server', sala: e.target.value.replace(" ", "_") });
+    }
+
+    //SEND MESSAGE CHAT
+    onSendMessage = (e) => {
+        e.preventDefault()
+        let messageUser = document.querySelector('#message_input').value
+        //IF MESSAGE NOT IS EMPY, SEND DATA
+        if (messageUser != "") {
+            socket.emit('chat_send_message', { message: messageUser, route: rutaSeleccionada })
+        }
+
+    }
+
+    socket.on('send_list_users', (users) => {
+        console.log("Salas disponibles", users)
+        userChat = users
+        console.log("users in chat", userChat)
+        loadUserChat()
+    })
+
+    //DETECTAMOS MENSAJE
+    socket.on('message_chat', (message) => {
+        //LOAD MESSAGE DIV.
+        let mensajeelement = document.querySelector('#messages')
+        console.log(message)
+        let divuser = document.createElement("div")
+
+        const newtext = document.createTextNode(message);
+        divuser.appendChild(newtext);
+        let element = document.createElement("div")
+        element.classList.add("message")
+        element.appendChild(divuser)
+        mensajeelement.appendChild(element)
+    })
+
+    loadUserChat = () => {
+
+        //LOAD SALAS RUTAS DISPONIBLES.
+        const mensaje = document.querySelector('.users')
+        //CLEAN CONTENT USERS
+        mensaje.innerHTML = ""
+
+        userChat.usersIds.forEach(user => {
+            console.log(user)
+            let divuser = document.createElement("div")
+
+            const newtext = document.createTextNode("user" + user.toString().substring(0, 4));
+            divuser.appendChild(newtext);
+            let element = document.createElement("div")
+            element.classList.add("message")
+            element.appendChild(divuser)
+            mensaje.appendChild(element)
+
+        });
+    }
+
+
+
+
+    //Evento para los usuarios conectados.
+    socket.on('chat send server message', (message) => {
+        console.log("Mensaje del servidor", message)
+        const mensaje = document.querySelector('#messages')
+
+        let text = document.createElement("div")
+        const newtext = document.createTextNode(message);
+        text.appendChild(newtext)
+        let element = document.createElement("div")
+        element.classList.add("message")
+        element.appendChild(text)
+        mensaje.appendChild(text)
+    })
+
+    socket.on('chat_user_conect', (message) => {
+        /*  console.log("Mensaje del servidor", message)
+         const mensaje = document.querySelector('#messages')
+ 
+         let text = document.createElement("div")
+         const newtext = document.createTextNode(message);
+         text.appendChild(newtext)
+         let element = document.createElement("div")
+         element.classList.add("message")
+         element.appendChild(text)
+         mensaje.appendChild(text) */
+    })
+
+
+
+    //END SOCKET CODE
+
     const appDiv = document.getElementById('app');
     appDiv.style.display = "none"
 
@@ -12,7 +116,7 @@ window.addEventListener('DOMContentLoaded', () => {
         maximumAge: 0
     };
 
-    
+
 
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition((pos) => {
@@ -49,7 +153,7 @@ window.addEventListener('DOMContentLoaded', () => {
     navigator.geolocation.clearWatch(watchID);
 
     const loadMap = (lat, lng) => {
-        console.log(lat, lng);
+
 
         mapboxgl.accessToken = 'pk.eyJ1IjoiY3J1c3RvMjAyMiIsImEiOiJjbDg3c3lmaTExNmg4M3BubGhyMThvMmhsIn0.AhcG868gRKbP-zDiccuMdA';
         const map = new mapboxgl.Map({
@@ -107,13 +211,13 @@ window.addEventListener('DOMContentLoaded', () => {
 
                             let dataPoints = Object.values(data)
 
-                            console.log(Array.of(dataPoints[0]))
+
 
                             Array.of(dataPoints[0]).forEach((coordenadas) => {
 
                                 const { Latitude, Longitude, Speed } = coordenadas
 
-                                console.log(Latitude, Longitude, Speed)
+
 
                                 geojson.features.push(
                                     {
@@ -143,7 +247,7 @@ window.addEventListener('DOMContentLoaded', () => {
                             el.style.backgroundSize = "cover"
                             el.style.borderRadius = "50%"
                             el.style.cursor = "pointer"
-                            
+
                             el.className = 'marker';
 
 
@@ -152,14 +256,14 @@ window.addEventListener('DOMContentLoaded', () => {
                             //AGEGANDO PUNTOS EN EL MAPA.
                             geojson.features.forEach((marker, index) => {
                                 //POPUP
-                                
+
                                 var popupText = new mapboxgl.Popup({ offset: 25 })
                                     .setLngLat([marker.geometry.coordinates.lat, marker.geometry.coordinates.lon])
                                     .setHTML(`<div><h3>${geojson.features[index].properties.title}</h3><br>Dirección:<span>${geojson.features[index].properties.description}</span><br><span>Velocidad: ${geojson.features[index].properties.velocidad}</span></div>`)
                                     .addTo(map);
 
 
-                                    el.id = `popmarketbus_${index}`
+                                el.id = `popmarketbus_${index}`
 
                                 let pointmarcketr = new mapboxgl.Marker(el)
                                     .setLngLat(marker.geometry.coordinates)
@@ -170,7 +274,7 @@ window.addEventListener('DOMContentLoaded', () => {
                             });
 
 
-                            console.table(geojson);
+
 
 
                         })
@@ -199,7 +303,7 @@ window.addEventListener('DOMContentLoaded', () => {
          * ESCUCHAMOS LA INFORMACION ENVIADA DESDE EL SERVIDOR
          */
         socket.on('chat_send_server_message', (msg) => {
-            console.log("datos recibidos", msg)
+            console.log(msg)
             const { Latitude, Longitude, Speed } = msg
             const el = document.createElement('div');
 
@@ -209,13 +313,13 @@ window.addEventListener('DOMContentLoaded', () => {
             el.style.backgroundSize = "cover"
             el.style.borderRadius = "50%"
             el.style.cursor = "pointer"
-            
+
             el.className = 'marker';
 
             var popupText = new mapboxgl.Popup({ offset: 25 })
-                                    .setLngLat([Longitude, Latitude])
-                                    .setHTML(`<div><h3>DEMO</h3><br>Dirección:<span>Norte - Sur</span><br><span>Velocidad: ${Speed}</span></div>`)
-                                    .addTo(map);
+                .setLngLat([Longitude, Latitude])
+                .setHTML(`<div><h3>DEMO</h3><br>Dirección:<span>Norte - Sur</span><br><span>Velocidad: ${Speed}</span></div>`)
+                .addTo(map);
 
 
             if (marker != null) {

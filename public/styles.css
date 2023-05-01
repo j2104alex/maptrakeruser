@@ -10,3 +10,66 @@
     top: 0;
     left: 0
 }
+
+.chat {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    place-items: center;
+    flex: 1 1 0;
+    width: 300px;
+    height: 330px;
+    position: absolute;
+    right: 0px;
+    bottom: 10px;
+    z-index: 9999;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 2px 2px 4px silver;
+    border: 2px solid silver
+}
+
+.chat form {
+    display: flex;
+}
+
+.users {
+    height: inherit;
+    width: 100%;
+    background-color: #e3e3e3;
+    border-right: 2px solid silver;
+}
+
+.messages-users {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    height: inherit;
+    width: 100%;
+    background-color: white;
+}
+
+.form-message {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center
+}
+
+.messages-users input {
+    padding: 3px
+}
+
+.message {
+    display: flex;
+    flex-direction: column;
+    font-size: 16px
+}
+
+/* #messages .message:nth-of-type(2n+1) {
+    background-color: #f2f2f2;
+    text-align: right;
+} */
+#messages .message:nth-child(odd) {
+    background-color: #c8cbcd;
+    border-bottom: 1px solid silver;
+}

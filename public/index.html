@@ -20,10 +20,27 @@
         <button onclick="notifyMe()">Notify me!</button>
     </div>
 
+    <div class="chat">
+        <div class="users">
 
+        </div>
+        <div class="messages-users">
+            <div id="messages">
+
+            </div>
+            <div class="form-message">
+                <form onsubmit="onSendMessage(event)">
+                    <input type="text" class="input" id="message_input" name="message" placeholder="Mensaje">
+                    <input type="submit" value="Enviar">
+                </form>
+            </div>
+        </div>
+
+    </div>
 
     <div style="position: absolute;top:10px">
         <datalist id="countrydata">
+            
             <option>Ruta 4</option>
             <option>Ruta 5</option>
             <option>Ruta 6</option>
@@ -34,7 +51,7 @@
         <label for="country">Rutas:</label>
 
         <input type="text" list="countrydata" id="country" name="country" size="50" onchange="onSelectRuta(event)"
-            autocomplete="off" />
+            autocomplete="off" placeholder="Selecciona una Ruta" />
     </div>
 
     <script src='mapa.js'></script>
@@ -46,24 +63,7 @@
     <script src="https://cdn.socket.io/4.6.0/socket.io.min.js"
         integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+"
         crossorigin="anonymous"></script>
-    <script>
-        var socket = io();
-        
-        onSelectRuta = (e) => {
-            console.log("SELECCINADO:", e.target.value.replace(" ", "_"))
-            
-            socket.emit('data_gps', { mensaje: 'hola server', sala: e.target.value.replace(" ", "_") });
-            socket.on('server_message_rooms', (mensaje) => {
-                console.log(mensaje)
-            });
-        }
 
-        socket.on('send_list_rooms',(rooms)=>{
-            console.log(rooms)
-        })
-
-
-    </script>
 
 
     <script>

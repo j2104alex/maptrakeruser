@@ -86,8 +86,7 @@ function main() {
      document.getElementById("getAcceleration").addEventListener("click", getAcceleration);
      document.getElementById("watchAcceleration").addEventListener(
          "click", watchAcceleration); */
-    document.getElementById("GuardarRuta").addEventListener(
-        "click", GuardarNombreRuta);
+   
 
     fetch('https://amigaapp-f2f93-default-rtdb.firebaseio.com/dbrutas.json')
         .then(response => response.json())
@@ -115,8 +114,7 @@ function main() {
         })
 
     document.getElementById('selectRutas').addEventListener('change', (event) => {
-        alert("ruta change")
-        window.socket.emit('join_room_sala', { room: nombreRutaDBRoom });
+    
         let temporizadorSimulador = setInterval(() => {
             window.socket.emit('geo_posicion', { room: nombreRutaDBRoom, data: puntosSimulacion[simlutePintCoordenate] });
 
@@ -134,16 +132,7 @@ function onSelectRuta(e) {
 
 }
 
-function GuardarNombreRuta(e) {
-    //+ new Date().toLocaleString().replace(",","-").replace(" ","")
-    /* window.socket.emit('join_room_sala', { room: nombreRutaDBRoom });
-    let temporizadorSimulador = setInterval(() => {
-        window.socket.emit('geo_posicion', { room: nombreRutaDBRoom, data: puntosSimulacion[simlutePintCoordenate] });
-        console.log("enviando datos....", puntosSimulacion[simlutePintCoordenate])
 
-        simlutePintCoordenate += 1
-    }, 3000); */
-}
 
 function getPosition() {
     var options = {
