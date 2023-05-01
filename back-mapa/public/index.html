@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Home</title>
+
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.10.0/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.10.0/mapbox-gl.css' rel='stylesheet' />
+    <link href='./styles.css' rel='stylesheet' />
+
+
+</head>
+
+<body>
+    <div id="map">
+
+    </div>
+    <div id="app">
+        <button onclick="notifyMe()">Notify me!</button>
+    </div>
+
+    <div class="chat">
+        <div class="users">
+
+        </div>
+        <div class="messages-users">
+            <div id="messages">
+
+            </div>
+            <div class="form-message">
+                <form onsubmit="onSendMessage(event)">
+                    <input type="text" class="input" id="message_input" name="message" placeholder="Mensaje">
+                    <input type="submit" value="Enviar">
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+    <div style="position: absolute;top:10px">
+        <datalist id="countrydata">
+            
+            <option>Ruta 4</option>
+            <option>Ruta 5</option>
+            <option>Ruta 6</option>
+            <option>Ruta 31</option>
+            <option>Ruta 36</option>
+
+        </datalist>
+        <label for="country">Rutas:</label>
+
+        <input type="text" list="countrydata" id="country" name="country" size="50" onchange="onSelectRuta(event)"
+            autocomplete="off" placeholder="Selecciona una Ruta" />
+    </div>
+
+    <script src='./mapa.js'></script>
+
+    <!--  <script src='./socket.io/socket.io.js'></script>
+    <script src='./js/clientsocket.js'></script> -->
+
+    <!-- <script src="./socket.io/socket.io.js"></script> -->
+    <script src="https://cdn.socket.io/4.6.0/socket.io.min.js"
+        integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+"
+        crossorigin="anonymous"></script>
+
+
+
+    <script>
+        function notifyMe() {
+            if (!("Notification" in window)) {
+                // Check if the browser supports notifications
+                alert("This browser does not support desktop notification");
+            } else if (Notification.permission === "granted") {
+                // Check whether notification permissions have already been granted;
+                // if so, create a notification
+                /* const notification = new Notification("Hi there!"); */
+                // create a new notification
+                const notification = new Notification('JavaScript Notification API', {
+                    body: 'This is a JavaScript Notification API demo',
+                    icon: './img/js.png',
+                    vibrate: true
+                });
+
+                // close the notification after 10 seconds
+                setTimeout(() => {
+                    notification.close();
+                }, 10 * 1000);
+
+                // navigate to a URL
+                notification.addEventListener('click', () => {
+                    window.open('https://www.javascripttutorial.net/web-apis/javascript-notification/', '_blank');
+                });
+                // …
+            } else if (Notification.permission !== "denied") {
+                // We need to ask the user for permission
+                Notification.requestPermission().then((permission) => {
+                    // If the user accepts, let's create a notification
+                    if (permission === "granted") {
+                        /*  const notification = new Notification("Hi there!"); */
+                        // create a new notification
+                        const notification = new Notification('JavaScript Notification API', {
+                            body: 'This is a JavaScript Notification API demo',
+                            icon: './img/js.png',
+                            vibrate: true
+                        });
+
+                        // close the notification after 10 seconds
+                        setTimeout(() => {
+                            notification.close();
+                        }, 10 * 1000);
+
+                        // navigate to a URL
+                        notification.addEventListener('click', () => {
+                            window.open('https://www.javascripttutorial.net/web-apis/javascript-notification/', '_blank');
+                        });
+                        // …
+                    }
+                });
+            }
+
+            // At last, if the user has denied notifications, and you
+            // want to be respectful there is no need to bother them anymore.
+        }
+    </script>
+</body>
+
+</html>
