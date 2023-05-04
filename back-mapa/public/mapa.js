@@ -10,9 +10,11 @@ window.addEventListener('DOMContentLoaded', () => {
 
     onSelectRuta = (e) => {
         console.log("SELECCINADO:", e.target.value.replace(" ", "_"))
-        //GUARDAMOS LA RUTA SELECCIONADA
+        //SAVE ROUTE SELECTED
         rutaSeleccionada = e.target.value.replace(" ", "_")
-        socket.emit('data_gps', { mensaje: 'hola server', sala: e.target.value.replace(" ", "_") });
+        console.log(rutaSeleccionada)
+        socket.emit('user_conect_room_serve',{room:rutaSeleccionada})
+        
     }
 
     //SEND MESSAGE CHAT
@@ -48,6 +50,9 @@ window.addEventListener('DOMContentLoaded', () => {
         mensajeelement.appendChild(element)
     })
 
+    /**
+     * Cargamos la lsita de todos los usuarios en el sistema.
+     */
     loadUserChat = () => {
 
         //LOAD SALAS RUTAS DISPONIBLES.
@@ -85,20 +90,6 @@ window.addEventListener('DOMContentLoaded', () => {
         element.appendChild(text)
         mensaje.appendChild(text)
     })
-
-    socket.on('chat_user_conect', (message) => {
-        /*  console.log("Mensaje del servidor", message)
-         const mensaje = document.querySelector('#messages')
- 
-         let text = document.createElement("div")
-         const newtext = document.createTextNode(message);
-         text.appendChild(newtext)
-         let element = document.createElement("div")
-         element.classList.add("message")
-         element.appendChild(text)
-         mensaje.appendChild(text) */
-    })
-
 
 
     //END SOCKET CODE
@@ -276,7 +267,7 @@ window.addEventListener('DOMContentLoaded', () => {
          * ESCUCHAMOS LA INFORMACION ENVIADA DESDE EL SERVIDOR
          */
         socket.on('chat_send_server_message', (msg) => {
-            console.log(msg)
+            console.log("recibiendo datos................",msg)
             const { Latitude, Longitude, Speed } = msg.data
             const el = document.createElement('div');
 
