@@ -6,6 +6,8 @@ let opcionesRuta = []
 let watchID;
 let simlutePintCoordenate = 0
 let puntosSimulacion;
+//variable para validar si el usuario actual puede enviar datos.
+let usersenddata = false
 
 document.addEventListener('DOMContentLoaded', main, false);
 
@@ -20,6 +22,7 @@ function main() {
     //TODO:CUANDO este funcionando en movil habilitamos esta linea.
     //window.socket.emit('geo_posicion', { room: nombreRutaDBRoom, data: _datos });
     //console.log("enviando datos....")
+
 
 
     //HACEMOS LA PETICION A FIREBASE DE LAS RUTAS GUARDADAS CON ANTERIORIDAD.
@@ -37,12 +40,6 @@ function main() {
             console.log(json)
             puntosSimulacion = Object.values(json)
             console.log(puntosSimulacion)
-
-            /*  if (simlutePintCoordenate > json.length) {
-                 clearInterval(temporizadorSimulador)
-                 simlutePintCoordenate = 0
-             } */
-
 
         })
         .catch(err => console.log(err))
@@ -66,6 +63,19 @@ function main() {
 
     window.socket = socket
 
+    //EVENT PARA ESPERAR RESPUESTA SI 2 USUARIO SE CONECTARON A LA MISMA RUTA
+    window.socket.on("route_message_user", (data) => {
+        console.log(data)
+
+        if (data.status) {
+            document.getElementById('info').innerHTML = data.message
+        }
+
+        if (!data.status) {
+            usersenddata = !data.status
+        }
+    })
+
     /* WonderPush.setLogging(true, function () {
         console.log("Success");
     }); */
@@ -86,7 +96,7 @@ function main() {
      document.getElementById("getAcceleration").addEventListener("click", getAcceleration);
      document.getElementById("watchAcceleration").addEventListener(
          "click", watchAcceleration); */
-   
+
 
     fetch('https://amigaapp-f2f93-default-rtdb.firebaseio.com/dbrutas.json')
         .then(response => response.json())
@@ -114,27 +124,32 @@ function main() {
         })
 
     document.getElementById('selectRutas').addEventListener('change', (event) => {
-    
-        let temporizadorSimulador = setInterval(() => {
-            window.socket.emit('geo_posicion', { room: nombreRutaDBRoom, data: puntosSimulacion[simlutePintCoordenate] });
+        if (usersenddata) {
+            let temporizadorSimulador = setInterval(() => {
+                window.socket.emit('geo_posicion', { room: nombreRutaDBRoom, data: puntosSimulacion[simlutePintCoordenate] });
 
-            console.log("enviando datos....", puntosSimulacion[simlutePintCoordenate])
+                console.log("enviando datos....", puntosSimulacion[simlutePintCoordenate])
 
-            simlutePintCoordenate += 1
-        }, 3000);
+                simlutePintCoordenate += 1
+            }, 2000);
+        }
+
+
     });
 
+
 }
+
+
 
 function onSelectRuta(e) {
     console.log(e.target.value);
     nombreRutaDBRoom = e.target.value.replace(" ", "_")
-
+    window.socket.emit('check_length_users_route_gps', { conect: 'user', room: nombreRutaDBRoom });
 }
 
-
-
 function getPosition() {
+
     var options = {
         enableHighAccuracy: true,
         maximumAge: 3600000
@@ -171,47 +186,32 @@ function watchPosition() {
     else {
         var options = {
             maximumAge: 3600000,
-            timeout: 3000,
+            timeout: 1000,
             enableHighAccuracy: true,
         }
         watchIDElement = navigator.geolocation.watchPosition(onSuccess, onError, options);
 
         function onSuccess(position) {
 
-            document.getElementById('info').innerHTML =
-                'Latitude: ' + position.coords.latitude + '\n' +
-                'Longitude: ' + position.coords.longitude + '\n' +
-                'Altitude: ' + position.coords.altitude + '\n' +
-                'Accuracy: ' + position.coords.accuracy + '\n' +
-                'Altitude Accuracy: ' + position.coords.altitudeAccuracy + '\n' +
-                'Heading: ' + position.coords.heading + '\n' +
-                'Speed: ' + position.coords.speed + '\n' +
-                'Timestamp: ' + position.timestamp + '\n';
+            if (usersenddata) {
+                document.getElementById('info').innerHTML =
+                    'Latitude: ' + position.coords.latitude + '\n' +
+                    'Longitude: ' + position.coords.longitude + '\n' +
+                    'Altitude: ' + position.coords.altitude + '\n' +
+                    'Accuracy: ' + position.coords.accuracy + '\n' +
+                    'Altitude Accuracy: ' + position.coords.altitudeAccuracy + '\n' +
+                    'Heading: ' + position.coords.heading + '\n' +
+                    'Speed: ' + position.coords.speed + '\n' +
+                    'Timestamp: ' + position.timestamp + '\n';
 
-            let _datos = {
-                'Fecha': new Date().toLocaleString().replace(",", "-").replace(" ", ""),
-                'Latitude': position.coords.latitude,
-                'Longitude': position.coords.longitude,
-                'Heading': position.coords.heading,
-                'Speed': position.coords.speed
+                let _datos = {
+                    'Fecha': new Date().toLocaleString().replace(",", "-").replace(" ", ""),
+                    'Latitude': position.coords.latitude,
+                    'Longitude': position.coords.longitude,
+                    'Heading': position.coords.heading,
+                    'Speed': position.coords.speed
+                }
             }
-
-
-            /*  window.socket.emit('geo_posicion', { room: nombreRutaDBRoom, data: puntosSimulacion[simlutePintCoordenate] });
-             console.log("enviando datos....",puntosSimulacion[simlutePintCoordenate])
- 
-             simlutePintCoordenate += 1 */
-            /* fetch('https://amigaapp-f2f93-default-rtdb.firebaseio.com/Prueba.json', {
-                method: "POST",
-                body: JSON.stringify(_datos),
-                headers: { "Content-type": "application/json; charset=UTF-8" }
-            })
-                .then(response => response.json())
-                .then(json => console.log(json))
-                .catch(err => console.log(err))
-                .finally(() => {
-                    console.log('finish')
-                }) */
         }
 
         function onError(error) {
