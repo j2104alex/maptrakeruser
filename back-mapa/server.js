@@ -36,6 +36,7 @@ app.get('/', (req, res) => {
 const users = [];
 //Return list user by room
 let usersIds = [];
+//RTUEN list user by room enabled
 let availableRooms = []
 let usersGPSdata = []
 io.on('connection', (socket) => {
@@ -63,14 +64,8 @@ io.on('connection', (socket) => {
   });
 
   socket.on('disconnecting', () => {
-
     console.log(`Usuario ${socket.id} está abandonando la sala`)
-    
-    
   });
-
-
-
 
   /**
    * EVENT SEND MESSAGE USERS BY ROOMS
@@ -84,39 +79,37 @@ io.on('connection', (socket) => {
 
   //EVENTO PARA ENVIAR INFORMACION DE LAS RUTAS.
   socket.on('geo_posicion', (data) => {
-    
-     
-    //EVENTO PARA TODAS LAS PERSONA CONECTADAS A LA SALA INFORMANDO LA LISTA DE LOS USUARIOS CONECTADOS
+    //EVENTO PARA TODAS LAS PERSONAS CONECTADAS A LA SALA.
     socket.broadcast.to(data.room).emit('chat_send_server_message', data)//solo a los de la sala
 
     //SI VAMOS A ENVIAR LA INFORMACION A TODOS
     //io.emit('chat_send_server_message', msg)
   });
 
-  //EVENTO PARA CONECTAR EL USUARIO AL SERVIDOR
+  //EVENTO PARA DETECTAR LOS USUARIOS CONECTADOS A LA MISMA SALA
   socket.on('user_conect_room_serve', (data) => {
     //SUSCRIBE TO ROOM USER FROM GPS PAGE.
     socket.join(data.room);
 
-    console.log(io.sockets.adapter.rooms)
+    //console.log(io.sockets.adapter.rooms)
 
     //SEND USER CONNECT TO ROOM.
     const usersInRoom = io.sockets.adapter.rooms.get(data.room);
-    
+
 
     if (usersInRoom) {
       usersIds = Array.from(usersInRoom.keys());
-      
+
     }
 
     // to all clients in room
     io.in(data.room).emit('send_list_users', { room: data.room, usersIds });
-    
+
   })
 
   //EVENTO PARa validar  cantidad de usuarios transmitiendo
   socket.on('check_length_users_route_gps', (roomData) => {
-    
+
 
     socket.join(roomData.room);
 
@@ -124,7 +117,7 @@ io.on('connection', (socket) => {
       return room.id === roomData.room
     });
 
-    
+
     if (validateroom == -1) {
       availableRooms = [{ id: roomData.room }, ...availableRooms]
 

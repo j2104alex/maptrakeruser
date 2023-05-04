@@ -13,8 +13,8 @@ window.addEventListener('DOMContentLoaded', () => {
         //SAVE ROUTE SELECTED
         rutaSeleccionada = e.target.value.replace(" ", "_")
         console.log(rutaSeleccionada)
-        socket.emit('user_conect_room_serve',{room:rutaSeleccionada})
-        
+        socket.emit('user_conect_room_serve', { room: rutaSeleccionada })
+
     }
 
     //SEND MESSAGE CHAT
@@ -173,8 +173,24 @@ window.addEventListener('DOMContentLoaded', () => {
             let opcionesRuta = []
 
 
+            
+
+            //Personalizamor en point marker del usuario    
+            const margkeruser = document.createElement('div');
+
+            margkeruser.style.width = "50px"
+            margkeruser.style.height = "50px"
+            margkeruser.style.backgroundImage = "url('../../assets/user_profile.svg')"
+            margkeruser.style.backgroundSize = "cover"
+            margkeruser.style.borderRadius = "50%"
+            margkeruser.style.cursor = "pointer"
+            margkeruser.style.backgroundColor = "white"
+            margkeruser.style.borderRadius = "100%"
+            margkeruser.className = 'marker';
+
+                              
             //Posicion actual usuario.
-            let marker = new mapboxgl.Marker()
+            let marker = new mapboxgl.Marker(margkeruser)
                 .setLngLat([lng, lat])
                 .addTo(map);
 
@@ -267,7 +283,7 @@ window.addEventListener('DOMContentLoaded', () => {
          * ESCUCHAMOS LA INFORMACION ENVIADA DESDE EL SERVIDOR
          */
         socket.on('chat_send_server_message', (msg) => {
-            console.log("recibiendo datos................",msg)
+            console.log("recibiendo datos................", msg)
             const { Latitude, Longitude, Speed } = msg.data
             const el = document.createElement('div');
 
@@ -291,10 +307,10 @@ window.addEventListener('DOMContentLoaded', () => {
             to.properties.distance = distance; */
 
             //Habilitar si solo queremos mostrar la ruta segun la room.
-            
+
             var popupText = new mapboxgl.Popup({ offset: 25 })
                 .setLngLat([Longitude, Latitude])
-                .setHTML(`<div><h3>${msg.room.replace('_',' ').toUpperCase()}</h3>Dirección:<span>Norte - Sur</span><br><span>Velocidad: ${Math.round(Speed*3.6)} K/h </span><br><span>Distancia: ${Math.round(distance * 1000)} m</span></div>`)
+                .setHTML(`<div><h3>${msg.room.replace('_', ' ').toUpperCase()}</h3>Dirección:<span>Norte - Sur</span><br><span>Velocidad: ${Math.round(Speed * 3.6)} K/h </span><br><span>Distancia: ${Math.round(distance * 1000)} m</span></div>`)
                 .addTo(map);
 
 
@@ -310,7 +326,11 @@ window.addEventListener('DOMContentLoaded', () => {
                     .addTo(map)
                     .setPopup(popupText);
             }
-            
+
+            /**
+             * ESTAS PARTE DEL CODIGO SE UTILIZARA PARA MOSTRAR TODAS LAS RUTAS EN EL MAPA.
+             * AUN FALTA AJUSTAR UN POCO LA LOGICA POR ESO ESTA COMENTADO
+             */
             /*console.log("buscando point", geojson.features)
             geojson.features.forEach((marker, index) => {
 
@@ -358,7 +378,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
             //Cargamos los puntos en el mapa
             loadPointMap()*/
-            
+
 
         });
     }
