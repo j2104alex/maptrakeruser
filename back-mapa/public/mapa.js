@@ -20,10 +20,11 @@ window.addEventListener('DOMContentLoaded', () => {
     //SEND MESSAGE CHAT
     onSendMessage = (e) => {
         e.preventDefault()
-        let messageUser = document.querySelector('#message_input').value
+        let messageUser = document.querySelector('#message_input')
         //IF MESSAGE NOT IS EMPY, SEND DATA
         if (messageUser != "") {
-            socket.emit('chat_send_message', { message: messageUser, route: rutaSeleccionada })
+            socket.emit('chat_send_message', { message: messageUser.value, route: rutaSeleccionada })
+            messageUser.value=""
         }
 
     }
@@ -56,7 +57,7 @@ window.addEventListener('DOMContentLoaded', () => {
     loadUserChat = () => {
 
         //LOAD SALAS RUTAS DISPONIBLES.
-        const mensaje = document.querySelector('.users')
+        const mensaje = document.querySelector('.chat_users')
         //CLEAN CONTENT USERS
         mensaje.innerHTML = ""
 

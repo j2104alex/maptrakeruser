@@ -12,8 +12,8 @@
 }
 
 .chat {
-    display: grid;
-    grid-template-columns: 1fr 3fr;
+    display: flex;
+    flex-direction: column;
     place-items: center;
     flex: 1 1 0;
     width: 300px;
@@ -28,10 +28,14 @@
     border: 2px solid silver
 }
 
+.contaniner_chat{
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    height: 100%;
+}
+
 .chat_title {
-    position: absolute;
     text-align: center;
-    top: 0px;
     width: 100%;
     height: 21px;
     background-color: silver;
@@ -46,7 +50,7 @@
 }
 
 .chat_users {
-    height: inherit;
+    height: 100%;
     width: 100%;
     background-color: #e3e3e3;
     border-right: 2px solid silver;

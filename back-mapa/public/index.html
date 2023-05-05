@@ -19,32 +19,34 @@
 
     </div>
     <div id="app">
-        
+
     </div>
 
     <div class="chat">
         <div class="chat_title">
             CHAT
         </div>
-        <div class="chat_users">
-
-        </div>
-        <div class="chat_messages-users">
-            <div id="messages">
+        <div class="contaniner_chat">
+            <div class="chat_users">
 
             </div>
-            <div class="chat_form-message">
-                <form onsubmit="onSendMessage(event)">
-                    <input type="text" class="input" id="message_input" name="message" placeholder="Mensaje">
-                    <input type="submit" value="Enviar">
-                </form>
+            <div class="chat_messages-users">
+                <div id="messages">
+
+                </div>
+                <div class="chat_form-message">
+                    <form onsubmit="onSendMessage(event)">
+                        <input type="text" class="input" id="message_input" name="message" placeholder="Mensaje">
+                        <input type="submit" value="Enviar">
+                    </form>
+                </div>
             </div>
         </div>
     </div>
 
     <div style="position: absolute;top:10px">
         <datalist id="countrydata">
-            
+
             <option>Ruta 4</option>
             <option>Ruta 5</option>
             <option>Ruta 6</option>
@@ -59,7 +61,6 @@
     </div>
 
     <script src='./mapa.js'></script>
-
     <script src="https://cdn.socket.io/4.6.0/socket.io.min.js"
         integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+"
         crossorigin="anonymous"></script>

@@ -31,7 +31,7 @@ app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
 
-
+// ---------------- SOCKET.IO ----------------- //
 //save user connection to server
 const users = [];
 //Return list user by room
@@ -39,10 +39,24 @@ let usersIds = [];
 //RTUEN list user by room enabled
 let availableRooms = []
 let usersGPSdata = []
+
+const eventsSocketio = {
+  SERVER_MESSAGE: 'chat send server message',
+  SERVER_SEND_LIST_USERS: 'send_list_users',
+  GET_CHAT_MESSAGE: 'chat_send_message',
+  SEND_CHAT_MENSSAGE: 'message_chat',
+  GET_USER_GPS_DATA: 'geo_posicion',
+  SEND_USER_GPS_DATA: 'chat_send_server_message',
+  USER_CONECT_ROOM_SERVER: 'user_conect_room_serve',
+  CHECK_LENGTH_USER_CONECT_ROOM_GPS: 'check_length_users_route_gps',
+  MESSAGE_PRIVATE_USER: 'route_message_user'
+}
+
+
 io.on('connection', (socket) => {
   console.log('a user connected');
   //MENSAJE DE BIENVENIDA.(privado)
-  io.to(socket.id).emit('chat send server message', "Hola bienvenido al server");
+  io.to(socket.id).emit(eventsSocketio.SERVER_MESSAGE, "Hola bienvenido al server");
 
   //DETECT USER DESCONECT
   socket.on('disconnect', () => {
@@ -53,6 +67,11 @@ io.on('connection', (socket) => {
 
   socket.on('leave room', (room) => {
     socket.leave(room);
+
+  });
+
+  socket.on('disconnecting', (room) => {
+    console.log(`Usuario ${socket.id} está abandonando la sala`)
     if (usersIds.length > 0) {
       usersIds = usersIds.filter((id) => {
         return id != socket.id
@@ -60,34 +79,30 @@ io.on('connection', (socket) => {
       console.log(usersIds);
     }
     //SEND NEW LIST USER connection
-    socket.broadcast.emit('send_list_users', { room: room, usersIds });
-  });
-
-  socket.on('disconnecting', () => {
-    console.log(`Usuario ${socket.id} está abandonando la sala`)
+    socket.broadcast.emit(eventsSocketio.SERVER_SEND_LIST_USERS, { room: room, usersIds });
   });
 
   /**
    * EVENT SEND MESSAGE USERS BY ROOMS
    */
-  socket.on('chat_send_message', (data) => {
+  socket.on(eventsSocketio.GET_CHAT_MESSAGE, (data) => {
     // to all clients in room
-    io.in(data.route).emit("message_chat", data.message);
+    io.in(data.route).emit(eventsSocketio.SEND_CHAT_MENSSAGE, data.message);
   })
 
 
 
   //EVENTO PARA ENVIAR INFORMACION DE LAS RUTAS.
-  socket.on('geo_posicion', (data) => {
+  socket.on(eventsSocketio.GET_USER_GPS_DATA, (data) => {
     //EVENTO PARA TODAS LAS PERSONAS CONECTADAS A LA SALA.
-    socket.broadcast.to(data.room).emit('chat_send_server_message', data)//solo a los de la sala
+    socket.broadcast.to(data.room).emit(eventsSocketio.SEND_USER_GPS_DATA, data)//solo a los de la sala
 
     //SI VAMOS A ENVIAR LA INFORMACION A TODOS
     //io.emit('chat_send_server_message', msg)
   });
 
   //EVENTO PARA DETECTAR LOS USUARIOS CONECTADOS A LA MISMA SALA
-  socket.on('user_conect_room_serve', (data) => {
+  socket.on(eventsSocketio.USER_CONECT_ROOM_SERVER, (data) => {
     //SUSCRIBE TO ROOM USER FROM GPS PAGE.
     socket.join(data.room);
 
@@ -103,12 +118,12 @@ io.on('connection', (socket) => {
     }
 
     // to all clients in room
-    io.in(data.room).emit('send_list_users', { room: data.room, usersIds });
+    io.in(data.room).emit(eventsSocketio.SERVER_SEND_LIST_USERS, { room: data.room, usersIds });
 
   })
 
   //EVENTO PARa validar  cantidad de usuarios transmitiendo
-  socket.on('check_length_users_route_gps', (roomData) => {
+  socket.on(eventsSocketio.CHECK_LENGTH_USER_CONECT_ROOM_GPS, (roomData) => {
 
 
     socket.join(roomData.room);
@@ -129,15 +144,16 @@ io.on('connection', (socket) => {
 
     if (usersIdroom.length > 1) {
       //notificamos solo al usuario conectado y enlazado a la misma ruta que ya estan monitoreando esa ruta.
-      io.to(usersIdroom.slice(1)).emit("route_message_user", { status: true, message: `La ${roomData.room.replace("_", " ")} ya esta monitoreada, sera conectado al servidor. pero no se enviara la informacion.` })
+      io.to(usersIdroom.slice(1)).emit(eventsSocketio.MESSAGE_PRIVATE_USER, { status: true, message: `La ${roomData.room.replace("_", " ")} ya esta monitoreada, sera conectado al servidor. pero no se enviara la informacion.` })
       //DESCONECTAMOS AL USUARIO PARA LIBERAR RECURSOS
       //socket.disconnect()
     } else {
-      io.to(socket.id).emit("route_message_user", { status: false, message: `` })
+      io.to(socket.id).emit(eventsSocketio.MESSAGE_PRIVATE_USER, { status: false, message: `` })
     }
   })
 });
 
+// ------------------ END SOCKET.IO --------------------------------//
 
 server.listen(process.env.PORT || 8000, () => {
   console.log('listening on http://localhost:8000');
